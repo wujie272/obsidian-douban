@@ -178,3 +178,703 @@
 
 
 
+
+/* Card Viewer Plugin Styles */
+
+.card-viewer-card {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  padding: 0;
+  margin: 16px 0;
+  background: var(--background-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.card-viewer-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* 卡片内容布局 */
+.card-viewer-content {
+  display: flex;
+}
+
+/* 左侧海报区域 */
+.card-viewer-poster-section {
+  flex: 0 0 150px;
+  background: var(--background-secondary);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  padding: 12px;
+}
+
+/* 海报图片样式 */
+.card-viewer-poster-container {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+}
+
+.card-viewer-poster {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-viewer-poster-placeholder {
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 20px;
+  background: var(--background-modifier-border);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-viewer-poster-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 200px;
+  background: var(--background-secondary);
+  border: 2px dashed var(--background-modifier-border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 20px;
+}
+
+.card-viewer-error-icon {
+  font-size: 2em;
+  margin-bottom: 8px;
+  opacity: 0.6;
+}
+
+.card-viewer-error-text {
+  font-size: 0.9em;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.card-viewer-debug-info {
+  font-size: 0.7em !important;
+  color: var(--text-faint) !important;
+  margin-top: 4px !important;
+  word-break: break-all;
+  max-width: 100%;
+}
+
+/* 右侧信息区域 */
+.card-viewer-info-section {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 标题和类型 */
+.card-viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.card-viewer-title {
+  color: var(--text-normal);
+  margin: 0;
+  font-size: 1.2em;
+  font-weight: 600;
+  line-height: 1.3;
+  flex: 1;
+}
+
+.card-viewer-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.card-viewer-type {
+  background: var(--text-accent);
+  color: var(--text-on-accent);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.card-viewer-type-movie {
+  background: #e74c3c;
+}
+
+.card-viewer-type-tv {
+  background: #3498db;
+}
+
+.card-viewer-type-book {
+  background: #f39c12;
+}
+
+.card-viewer-type-music {
+  background: #9b59b6;
+}
+
+/* 评分和日期 */
+.card-viewer-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 0.9em;
+}
+
+.card-viewer-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-accent);
+  font-weight: 600;
+}
+
+.card-viewer-stars {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.card-viewer-star {
+  width: 12px;
+  height: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-viewer-star svg {
+  width: 100%;
+  height: 100%;
+}
+
+.card-viewer-star.full svg {
+  color: #fbbf24;
+}
+
+.card-viewer-star.empty svg {
+  color: #d1d5db;
+}
+
+.card-viewer-rating-text {
+  font-size: 0.85em;
+  margin-left: 4px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+.card-viewer-date {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* 详细信息区域 */
+.card-viewer-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-viewer-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+.card-viewer-label {
+  color: var(--text-muted);
+  font-weight: 600;
+  min-width: 50px;
+  flex-shrink: 0;
+}
+
+.card-viewer-value {
+  color: var(--text-normal);
+  flex: 1;
+}
+
+.card-viewer-genres-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.card-viewer-genre-tag {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.8em;
+  font-weight: 500;
+  display: inline-block;
+  white-space: nowrap;
+  border: 1px solid var(--interactive-accent-hover);
+}
+
+/* 简介样式 */
+.card-viewer-overview {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.card-viewer-overview-text {
+  color: var(--text-muted);
+  font-size: 0.9em;
+  line-height: 1.5;
+  margin-top: 6px;
+  max-height: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* 链接样式 */
+.card-viewer-url {
+  margin-top: 12px;
+}
+
+.card-viewer-link {
+  color: var(--text-accent);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9em;
+  padding: 6px 12px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--background-modifier-border);
+  display: inline-block;
+  transition: all 0.2s ease;
+}
+
+.card-viewer-link:hover {
+  background: var(--text-accent);
+  color: var(--text-on-accent);
+  transform: translateY(-1px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .card-viewer-card {
+    margin: 12px 0;
+  }
+  .card-viewer-content {
+    flex-direction: row !important;
+    min-height: auto;
+  }
+  .card-viewer-poster-section {
+    flex: 0 0 120px !important;
+    width: auto !important;
+    padding: 8px !important;
+  }
+  .card-viewer-poster {
+    border-radius: 6px;
+  }
+  .card-viewer-info-section {
+    padding: 10px !important;
+  }
+  .card-viewer-header {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .card-viewer-title {
+    font-size: 1.1em !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .card-viewer-type {
+    align-self: center !important;
+    font-size: 0.75em;
+    padding: 3px 8px;
+    flex-shrink: 0;
+  }
+  .card-viewer-meta {
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .card-viewer-star {
+    width: 14px;
+    height: 14px;
+  }
+  .card-viewer-rating-text {
+    font-size: 0.95em;
+  }
+  .card-viewer-details {
+    gap: 6px !important;
+  }
+  .card-viewer-detail {
+    flex-direction: row !important;
+    gap: 6px !important;
+    font-size: 0.95em !important;
+    line-height: 1.5;
+  }
+  .card-viewer-label {
+    min-width: 44px !important;
+    font-size: 0.9em;
+  }
+  .card-viewer-value {
+    font-size: 0.9em;
+  }
+  .card-viewer-genre-tag {
+    font-size: 0.8em !important;
+    padding: 3px 8px !important;
+  }
+  .card-viewer-overview {
+    margin-top: 4px;
+    padding-top: 4px;
+  }
+  .card-viewer-overview-text {
+    font-size: 0.7em !important;
+    line-height: 1.3;
+    -webkit-line-clamp: 1 !important;
+    max-height: 18px !important;
+  }
+}
+@media (max-width: 400px) {
+  .card-viewer-poster-section {
+    flex: 0 0 100px !important;
+    padding: 6px !important;
+  }
+  .card-viewer-info-section {
+    padding: 6px !important;
+  }
+  .card-viewer-title {
+    font-size: 0.85em !important;
+  }
+  .card-viewer-detail {
+    font-size: 0.7em !important;
+  }
+}
+
+/* HTML Viewer Styles */
+.card-viewer-html-container {
+  margin: 16px 0;
+}
+
+.card-viewer-html-header {
+  margin-bottom: 8px;
+}
+
+.card-viewer-html-type {
+  font-size: 10px;
+  color: #888;
+  opacity: 0.6;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-viewer-html-content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.card-viewer-html-placeholder {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-style: italic;
+  padding: 20px;
+  text-align: center;
+  background-color: var(--background-secondary);
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: 4px;
+}
+
+/* Card Viewer Interactive Styles */
+.card-viewer-clickable {
+  cursor: pointer;
+}
+
+/* Poster Image Styles */
+.card-viewer-poster-image {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-viewer-poster-image.loaded {
+  opacity: 1;
+}
+
+.card-viewer-poster-image.hidden {
+  display: none;
+}
+
+/* 图片网格样式 */
+.card-viewer-imgs-grid-container {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  padding: 0;
+  margin: 16px 0;
+  background: var(--background-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.card-viewer-imgs-header {
+  background: var(--background-secondary);
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-viewer-imgs-type {
+  font-size: 10px;
+  color: #888;
+  opacity: 0.6;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-viewer-imgs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 16px;
+}
+
+.card-viewer-imgs-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--background-secondary);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-viewer-imgs-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-viewer-imgs-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.2s ease;
+}
+
+.card-viewer-imgs-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  color: white;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.card-viewer-imgs-item:hover .card-viewer-imgs-title {
+  opacity: 1;
+}
+
+.card-viewer-imgs-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.card-viewer-imgs-item.error {
+  background: var(--background-modifier-error);
+}
+
+.card-viewer-imgs-placeholder {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 40px;
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+  .card-viewer-imgs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 400px) {
+  .card-viewer-imgs-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* HTML渲染错误处理样式 */
+.card-viewer-html-error {
+  background: var(--background-modifier-error);
+  color: var(--text-error);
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--background-modifier-error-border);
+  margin: 8px 0;
+  font-family: var(--font-monospace);
+  font-size: 14px;
+}
+
+.card-viewer-image-load-error {
+  background: var(--background-modifier-error);
+  color: var(--text-error);
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--background-modifier-error-border);
+  margin: 4px 0;
+  font-size: 12px;
+  text-align: center;
+  display: inline-block;
+}
+
+/* HTML内容容器增强 */
+.card-viewer-html-content {
+  position: relative;
+}
+
+.card-viewer-html-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 8px 0;
+}
+
+/* Image Modal Styles */
+.card-viewer-image-modal {
+  display: flex;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.card-viewer-modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.card-viewer-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.card-viewer-modal-close:active {
+  transform: scale(0.95);
+}
+
+.card-viewer-modal-image {
+  max-width: 90%;
+  max-height: 70vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: block;
+}
+
+.card-viewer-modal-image-hidden {
+  display: none;
+}
+
+.card-viewer-modal-title {
+  text-align: center;
+  margin-top: 10px;
+  padding: 0 20px;
+  font-size: 16px;
+  color: var(--text-normal);
+  font-weight: 500;
+  max-width: 90%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow: hidden;
+}
+
+.card-viewer-modal-error {
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 40px;
+  font-size: 1.1em;
+}
+
+/* Settings page styles */
+.card-viewer-settings-message {
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.card-viewer-settings-button-container {
+  display: flex;

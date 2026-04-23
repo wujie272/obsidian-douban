@@ -27,6 +27,7 @@ import SettingsManager from "./douban/setting/SettingsManager";
 import {SyncConfig} from "./douban/sync/model/SyncConfig";
 import SyncHandler from "./douban/sync/handler/SyncHandler";
 import UserComponent from "./douban/user/UserComponent";
+import {CardViewerIntegration} from "../../card-viewer/CardViewerIntegration";
 import {i18nHelper} from './lang/helper';
 import {log} from "src/org/wanxp/utils/Logutil";
 import GithubUtil from "./utils/GithubUtil";
@@ -286,7 +287,16 @@ export default class DoubanPlugin extends Plugin {
 		// this.fetchOnlineData(this.settingsManager);
 		this.userComponent = new UserComponent(this.settingsManager);
 		this.netFileHandler = new NetFileHandler(this.fileHandler);
-		this.userComponent.assumeLoggedIn();
+		// 🗝️ 从钥匙串加载凭据（如果存在），再走原有检测逻辑
+		this.userComponent.initKeychain(this.app);
+
+		// 🃏 注册 Card Viewer 卡片渲染（card-movie / card-book 等）
+		try {
+			const cardViewer = new CardViewerIntegration(this.app, this);
+			cardViewer.registerProcessors();
+		} catch (e) {
+			console.warn("Douban: 卡片渲染器初始化失败，不影响核心功能", e);
+		}
 
 		this.settingTab = new DoubanSettingTab(this.app, this);
 		this.addSettingTab(this.settingTab);

@@ -1,5 +1,5 @@
 import SettingsManager from "../setting/SettingsManager";
-import {RequestUrlParam} from "obsidian";
+import {App, RequestUrlParam} from "obsidian";
 import {CheerioAPI, load} from "cheerio";
 import {log} from "../../utils/Logutil";
 import {i18nHelper} from "../../lang/helper";
@@ -11,6 +11,11 @@ import { request } from "https";
 import HttpUtil from "../../utils/HttpUtil";
 import {DEFAULT_DOUBAN_HEADERS} from "../../constant/Constsant";
 import {DoubanHttpUtil} from "../../utils/DoubanHttpUtil";
+
+/** 钥匙串存储用的 key 名前缀 */
+const KC_PREFIX = 'obsidian-douban-plugin:';
+const KC_COOKIE = KC_PREFIX + 'cookie';
+const KC_HEADERS = KC_PREFIX + 'headers';
 
 export default class UserComponent {
 	private settingsManager: SettingsManager;
@@ -35,15 +40,51 @@ export default class UserComponent {
 		return this.user && this.user.login;
 	}
 
-	logout() {
+	async logout() {
 		if (this.user) {
 			this.user.login = false;
 		}
 		this.user = null;
 		this.verified = false;
-		this.settingsManager.updateSetting('loginCookiesContent', '');
-		this.settingsManager.updateSetting('loginHeadersContent', '');
+		await this.settingsManager.updateSetting('loginCookiesContent', '');
+		await this.settingsManager.updateSetting('loginHeadersContent', '');
+		// 同时清理钥匙串
+		this.clearKeychain();
+	}
 
+	/**
+	 * 🗝️ 初始化时从钥匙串加载凭据（如果有），再走原有的同步检测
+	 * 如果 data.json 有凭据但钥匙串没有，自动同步到钥匙串
+	 */
+	async initKeychain(app: App): Promise<void> {
+		const ss = (app as any).secretStorage;
+		if (!ss) {
+			this.assumeLoggedIn();
+			return;
+		}
+		try {
+			const kcCookie = ss.getSecret(KC_COOKIE) as string | undefined;
+			const kcHeaders = ss.getSecret(KC_HEADERS) as string | undefined;
+
+			// 钥匙串有数据 → 优先用钥匙串的（覆盖 data.json）
+			if (kcCookie) {
+				this.settingsManager.settings.loginCookiesContent = kcCookie;
+			}
+			if (kcHeaders) {
+				this.settingsManager.settings.loginHeadersContent = kcHeaders;
+			}
+
+			// 如果 data.json 有凭据但钥匙串没有 → 自动同步到钥匙串
+			if (!kcCookie && this.settingsManager.getSetting('loginCookiesContent')) {
+				this.setKeychain(KC_COOKIE, this.settingsManager.getSetting('loginCookiesContent') as string);
+			}
+			if (!kcHeaders && this.settingsManager.getSetting('loginHeadersContent')) {
+				this.setKeychain(KC_HEADERS, this.settingsManager.getSetting('loginHeadersContent') as string);
+			}
+		} catch (e) {
+			// 钥匙串不可用，静默降级
+		}
+		this.assumeLoggedIn();
 	}
 
 	assumeLoggedIn(): void {
@@ -73,8 +114,33 @@ export default class UserComponent {
 	}
 
 
+	/** 🗝️ 获取钥匙串对象 */
+	private get ss(): any {
+		return (this.settingsManager.app as any)?.secretStorage;
+	}
 
-	async loginHeaders(headers: object):Promise<User> {
+	/** 保存值到钥匙串（静默降级）——用 setSecret 而非 set */
+	private setKeychain(key: string, value: string): void {
+		try {
+			if (this.ss) this.ss.setSecret(key, value);
+		} catch (e) {
+			// 不支持钥匙串的版本静默忽略
+		}
+	}
+
+	/** 清理钥匙串 */
+	private clearKeychain(): void {
+		try {
+			if (this.ss) {
+				this.ss.setSecret(KC_COOKIE, '');
+				this.ss.setSecret(KC_HEADERS, '');
+			}
+		} catch (e) {
+			// 静默忽略
+		}
+	}
+
+	async loginHeaders(headers: object): Promise<User> {
 		if(!headers) {
 			return new User();
 		}
@@ -85,7 +151,8 @@ export default class UserComponent {
 		});
 		if(this.user) {
 			this.verified = true;
-			this.settingsManager.updateSetting('loginHeadersContent', JSON.stringify(headers));
+			await this.settingsManager.updateSetting('loginHeadersContent', JSON.stringify(headers));
+			this.setKeychain(KC_HEADERS, JSON.stringify(headers));
 		}
 		return this.user;
 	}
@@ -96,12 +163,13 @@ export default class UserComponent {
 			.then(this.getUserInfo);
 	}
 
-	async loginCookie(cookie: any):Promise<User> {
+	async loginCookie(cookie: any): Promise<User> {
 		const headers: object = this.settingsManager.getHeadersByCookie(cookie);
 		return this.loginHeaders(headers)
-			.then(user => {
+			.then(async user => {
 				if(this.user) {
-					this.settingsManager.updateSetting('loginCookiesContent', cookie);
+					await this.settingsManager.updateSetting('loginCookiesContent', cookie);
+					this.setKeychain(KC_COOKIE, cookie);
 				}
 				return user;
 			});

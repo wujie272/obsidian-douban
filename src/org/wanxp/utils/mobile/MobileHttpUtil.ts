@@ -7,6 +7,34 @@ import {request} from "https";
 
 export default class MobileHttpUtil {
 	/**
+	 * 清理有冲突的请求头（Host, Connection等），换上真正的手机UA
+	 */
+	private static cleanHeaders(raw: any, url: string): Record<string, string> {
+		const HEADERS_TO_DROP = new Set([
+			'host', 'connection', 'content-length',
+			'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user',
+			'upgrade-insecure-requests',
+		]);
+		const clean: Record<string, string> = {};
+		if (raw) {
+			for (const [k, v] of Object.entries(raw)) {
+				if (v == null || v === '') continue;
+				if (HEADERS_TO_DROP.has(k.toLowerCase())) continue;
+				clean[k] = String(v);
+			}
+		}
+		// 保证必须的头
+		if (!clean['User-Agent']) {
+			clean['User-Agent'] = 'Mozilla/5.0 (Linux; Android 13; Pixel 6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36';
+		}
+		// 带上Cookie（从原始头提取）
+		if (raw && raw['Cookie']) {
+			clean['Cookie'] = String(raw['Cookie']);
+		}
+		return clean;
+	}
+
+	/**
 	 * get请求
 	 * @param url 请求地址
 	 * @param headers 请求参数
@@ -17,12 +45,12 @@ export default class MobileHttpUtil {
 	}
 	private static async httpRequestGetInner(url: string, headers: any, times:number, settingsManager?: SettingsManager): Promise<RequestUrlResponse> {
 
-		const {Cookie, ...headersInner} = headers;
+		const cleanHeaders = this.cleanHeaders(headers, url);
 
 		let requestUrlParam: RequestUrlParam = {
 			url: url,
 			method: "GET",
-			headers: {'Cookie': Cookie},
+			headers: cleanHeaders,
 			throw: true,
 		};
 		return await requestUrl(requestUrlParam)

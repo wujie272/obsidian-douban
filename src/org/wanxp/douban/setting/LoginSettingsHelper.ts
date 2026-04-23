@@ -153,17 +153,56 @@ ${i18nHelper.getMessage('100125')}`;
 				button.setDisabled(true);
 				manager.debug(`配置界面:点击退出登录按钮，准备退出登录`)
 				// manager.debug(`配置界面:登出界面退出登录请求检测成功，准备退出登录`)
-				manager.plugin.userComponent.logout();
+				await manager.plugin.userComponent.logout();
 				manager.debug(`配置界面:退出登录成功`);
 				constructDoubanTokenSettingsUI(containerEl, manager);
 			});
 	});
 }
 
+/**
+ * 手机端登录界面：显示Cookie输入框供用户粘贴豆瓣Cookie完成登录
+ * 因为手机端无法弹出Electron登录窗口，所以直接提供Cookie登录方式
+ */
 function showMobileLogin(containerEl: HTMLElement, manager: SettingsManager) {
+	manager.debug(`配置界面(手机端):未登录-展示Cookie登录界面`);
+
+	// 1. 显示说明文字
 	new Setting(containerEl)
 		.setName(i18nHelper.getMessage('100126'))
-		.setDesc(i18nHelper.getMessage('100129'))
+		.setDesc(i18nHelper.getMessage('100140'));
+
+	// 2. Cookie 输入区域
+	const cookieInputEl = containerEl.createDiv("login-button-cookie");
+
+	new Setting(cookieInputEl)
+		.setName(i18nHelper.getMessage('100136'))
+		.setClass("obsidian_douban_settings_cookie_login")
+		.addTextArea((text) => {
+			text.setPlaceholder(i18nHelper.getMessage('100141'));
+			text.onChange(value => manager.updateCookieTemp(value));
+			return text;
+		})
+		.addExtraButton((button) => {
+			return button
+				.setIcon('check')
+				.setTooltip(i18nHelper.getMessage('100152'))
+				.onClick(async () => {
+					manager.debug(`配置界面(手机端):确认输入Cookie`);
+					const cookieValue = manager.getCookieTemp();
+					if (!cookieValue) {
+						log.notice(i18nHelper.getMessage('100142'));
+						return;
+					}
+					const user: User = await manager.plugin.userComponent.loginCookie(cookieValue);
+					if (!user || !user.id) {
+						log.notice(i18nHelper.getMessage('100137'));
+						return;
+					}
+					manager.debug(`配置界面(手机端):Cookie登录成功, id:${StringUtil.confuse(user.id)}, 用户名:${StringUtil.confuse(user.name)}`);
+					constructDoubanTokenSettingsUI(containerEl, manager);
+				});
+		});
 }
 
 function showMobileLogout(containerEl: HTMLElement, manager: SettingsManager) {
@@ -183,10 +222,8 @@ ${i18nHelper.getMessage('100125')}`;
 				.setCta()
 				.onClick(async () => {
 					button.setDisabled(true);
-					manager.updateSetting('loginCookiesContent', '');
-					manager.updateSetting('loginHeadersContent', '');
+					await manager.plugin.userComponent.logout();
 					constructDoubanTokenSettingsUI(containerEl, manager);
 				});
 		});
 }
-

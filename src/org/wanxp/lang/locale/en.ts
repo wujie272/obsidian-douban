@@ -130,6 +130,10 @@ PS: This file could be delete if you want to.
 	'100134': `If you login failed, please click this button and follow`,
 	'100139': `Tutorial`,
 	'100138': `get Cookie and input to text area bellow`,
+	'100140': `Mobile Cookie Login: Log in to Douban on your computer browser first, then copy the Cookie string from browser developer tools, paste it into the input box below, and click ✔️ to confirm.`, 
+	'100141': `Paste Douban Cookie here...`, 
+	'100142': `Please enter Cookie content first`, 
+	'100152': `Confirm Login`,
 	'100132': `Load Douban Login Page Failed`,
 
 
